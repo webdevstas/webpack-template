@@ -83,7 +83,7 @@ module.exports = {
         }
     },
     optimization: optimization(),
-    devtool: isDev ? 'source-map' : '',
+    devtool: isDev ? 'source-map' : false,
     plugins: plugins(),
     module: {
         rules: [
