@@ -88,6 +88,10 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /\.html$/,
+                loader: 'html-loader'
+              },
+            {
                 test: /\.(css)$/,
                 use: cssLoaders()
             },
@@ -96,8 +100,11 @@ module.exports = {
                 use: cssLoaders('sass-loader')
             },
             {
-                test: /\.(png|jpg|svg|gif)$/,
-                use: ['file-loader']
+                test: /\.(png|jpe?g|svg|gif)$/,
+                loader: 'file-loader',
+                options: {
+                    outputPath: './images',
+                }
             },
             {
                 test: /\.(ttf|woff|woff2|eot)$/,
