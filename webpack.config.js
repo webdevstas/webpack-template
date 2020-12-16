@@ -5,6 +5,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const TerserWebpackPlugin = require('terser-webpack-plugin')
 const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin')
+const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer')
 
 const isDev = process.env.NODE_ENV === 'development'
 const isProd = !isDev
@@ -25,7 +26,7 @@ function optimization() {
 }
 
 function filename(ext) {
-    return isProd ? `[name].${ext}` : `[name].[hash].${ext}`
+    return isProd ? `[name].${ext}` : `[name].[contenthash].${ext}`
 }
 
 function cssLoaders(extra) {
@@ -47,6 +48,27 @@ function cssLoaders(extra) {
     return loaders
 }
 
+function plugins() {
+    let base = [
+        new HTMLWebpackPlugin({
+            template: './index.html',
+            minify: {
+                collapseWhitespace: isProd
+            }
+        }),
+        new CleanWebpackPlugin(),
+        new MiniCssExtractPlugin({
+            filename: filename('css')
+        })
+    ]
+
+    if (isProd) {
+        base.push(new BundleAnalyzerPlugin)
+    }
+
+    return base
+}
+
 module.exports = {
     context: path.resolve(__dirname, 'src'),
     mode: 'development',
@@ -62,18 +84,7 @@ module.exports = {
     },
     optimization: optimization(),
     devtool: isDev ? 'source-map' : '',
-    plugins: [
-        new HTMLWebpackPlugin({
-            template: './index.html',
-            minify: {
-                collapseWhitespace: isProd
-            }
-        }),
-        new CleanWebpackPlugin(),
-        new MiniCssExtractPlugin({
-            filename: filename('css')
-        })
-    ],
+    plugins: plugins(),
     module: {
         rules: [
             {
